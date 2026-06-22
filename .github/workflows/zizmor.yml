@@ -53,6 +53,4 @@ jobs:
       - uses: zizmorcore/zizmor-action@192e21d79ab29983730a13d1382995c2307fbcaa  # v0.5.7
         with:
           persona: ${{ inputs.persona }}
-          # bracket notation: the hyphenated input name can't be read via
-          # dot notation (inputs.advanced-security parses as subtraction).
-          advanced-security: ${{ inputs['advanced-security'] }}
+          advanced-security: ${{ inputs.advanced-security }}
