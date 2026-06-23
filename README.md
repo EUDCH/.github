@@ -49,6 +49,7 @@ caller's CI until it re-pins.
 |-------|---------|---------|
 | `persona` | `regular` | Audit strictness: `regular`, `pedantic`, or `auditor`. |
 | `advanced-security` | `true` | Upload SARIF to the Security tab (needs code scanning). Set `false` on a private repo without GitHub Advanced Security. |
+| `enforce` | `false` | Fail CI on any zizmor finding. Set `true` once the repo's baseline is clean; new findings then block the PR. Accept a specific finding with an inline `# zizmor: ignore[rule]` comment instead of disabling enforcement. |
 
 ### Behaviour notes
 
@@ -58,6 +59,8 @@ caller's CI until it re-pins.
   defensively rather than depend on it.) The reusable workflow guards against
   this centrally; a fork's workflow changes are scanned on push to the default
   branch after merge.
-- **Findings are advisory during calibration.** They land in the Security
-  tab; the job stays green. Flip to blocking per repo once the baseline is
-  clean.
+- **Findings are advisory during calibration** (`enforce: false`, the
+  default). They land in the Security tab and the job stays green. Once a
+  repo's baseline is clean, set `enforce: true` in its caller so new findings
+  fail CI; accept a specific finding with an inline `# zizmor: ignore[rule]`
+  comment rather than turning enforcement off.
