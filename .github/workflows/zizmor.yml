@@ -79,12 +79,20 @@ jobs:
         if: ${{ inputs.enforce }}
         env:
           SARIF: ${{ steps.zizmor.outputs.output-file }}
+          ADVANCED_SECURITY: ${{ inputs.advanced-security }}
         run: |
           if [ -z "$SARIF" ] || [ ! -f "$SARIF" ]; then
-            echo "::warning::enforce=true but no SARIF was produced; cannot enforce"
+            if [ "$ADVANCED_SECURITY" = "true" ]; then
+              echo "::error::enforce=true but no SARIF was produced — failing closed."
+              exit 1
+            fi
+            # advanced-security=false runs zizmor in annotations mode, whose own
+            # exit code already fails CI on findings; nothing to enforce here.
+            echo "::notice::advanced-security=false; zizmor's exit code gates findings."
             exit 0
           fi
           count="$(jq '[.runs[]?.results[]?] | length' "$SARIF")"
+          count="${count:-0}"
           echo "zizmor reported ${count} finding(s)"
           if [ "${count}" -gt 0 ]; then
             echo "::error::zizmor found ${count} finding(s); failing (enforce=true). Fix or ignore them."
