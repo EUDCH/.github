@@ -46,11 +46,12 @@ jobs:
   zizmor:
     name: zizmor static analysis
     # Skip on fork PRs: a pull_request from a fork gets a read-only
-    # GITHUB_TOKEN regardless of permissions:, so the SARIF upload
-    # (security-events: write) would 403 and fail the job. Pushes and
-    # same-repo PRs run; a fork's workflow changes are scanned on push to the
-    # default branch after merge. The github context here is the CALLER's
-    # event, so this guards every caller centrally.
+    # GITHUB_TOKEN regardless of permissions:. The SARIF upload
+    # (security-events: write) may then fail; GitHub has a code-scanning
+    # exception that can permit it, but we skip defensively rather than rely
+    # on it. Pushes and same-repo PRs run; a fork's workflow changes are
+    # scanned on push to the default branch after merge. The github context
+    # here is the CALLER's event, so this guards every caller centrally.
     if: >-
       github.event_name != 'pull_request' ||
       github.event.pull_request.head.repo.full_name == github.repository

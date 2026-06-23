@@ -53,9 +53,11 @@ caller's CI until it re-pins.
 ### Behaviour notes
 
 - **Fork PRs are skipped automatically.** A `pull_request` from a fork gets a
-  read-only `GITHUB_TOKEN`, so the SARIF upload would 403 and fail. The
-  reusable workflow guards against this centrally; a fork's workflow changes
-  are scanned on push to the default branch after merge.
+  read-only `GITHUB_TOKEN`, so the SARIF upload can fail. (GitHub has a
+  code-scanning exception that may permit it, but the workflow skips
+  defensively rather than depend on it.) The reusable workflow guards against
+  this centrally; a fork's workflow changes are scanned on push to the default
+  branch after merge.
 - **Findings are advisory during calibration.** They land in the Security
   tab; the job stays green. Flip to blocking per repo once the baseline is
   clean.
