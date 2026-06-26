@@ -69,8 +69,11 @@ jobs:
         id: zizmor
         # On a fork PR, force advanced-security off (no SARIF upload is possible
         # on a read-only token) and surface findings as inline annotations
-        # instead. advanced-security and annotations are mutually exclusive; the
-        # two expressions below can never both be true. continue-on-error keeps a
+        # instead. advanced-security is ALWAYS off on a fork PR (the expression
+        # below can't be true when IS_FORK_PR is true), so annotations can be
+        # enabled for every fork PR — including a caller that itself sets
+        # advanced-security: false — without ever colliding with the
+        # mutually-exclusive advanced-security path. continue-on-error keeps a
         # downgraded fork PR non-blocking ONLY when the caller is report-only
         # (advanced-security: true + enforce: false), so its findings stay
         # advisory exactly as they would on a same-repo PR; every other case
@@ -80,7 +83,7 @@ jobs:
         with:
           persona: ${{ inputs.persona }}
           advanced-security: ${{ inputs.advanced-security && env.IS_FORK_PR != 'true' }}
-          annotations: ${{ env.IS_FORK_PR == 'true' && inputs.advanced-security }}
+          annotations: ${{ env.IS_FORK_PR == 'true' }}
       # Report-only by default: advanced-security uploads SARIF and suppresses
       # zizmor's exit codes, so the step above always passes. Once a repo's
       # baseline is clean the caller sets enforce: true and the step below fails
