@@ -53,12 +53,17 @@ caller's CI until it re-pins.
 
 ### Behaviour notes
 
-- **Fork PRs are skipped automatically.** A `pull_request` from a fork gets a
-  read-only `GITHUB_TOKEN`, so the SARIF upload can fail. (GitHub has a
-  code-scanning exception that may permit it, but the workflow skips
-  defensively rather than depend on it.) The reusable workflow guards against
-  this centrally; a fork's workflow changes are scanned on push to the default
-  branch after merge.
+- **Fork PRs are scanned in annotation mode.** A `pull_request` from a fork
+  gets a read-only `GITHUB_TOKEN`, so the SARIF upload to the Security tab is
+  not possible. Rather than skip the scan — which would leave external
+  contributors' workflow changes, the ones most worth checking, unscanned until
+  after merge — the workflow downgrades fork PRs to **annotation mode**
+  (`advanced-security: false`): findings show up as inline PR annotations
+  instead of in the Security tab. The report-vs-block decision matches what the
+  same change would get on a same-repo PR — advisory under `enforce: false`,
+  blocking under `enforce: true` (and always blocking for a caller that sets
+  `advanced-security: false` itself). zizmor is static analysis and never
+  executes the scanned workflows, so running it on fork content is safe.
 - **Findings are advisory during calibration** (`enforce: false`, the
   default). They land in the Security tab and the job stays green. Once a
   repo's baseline is clean, set `enforce: true` in its caller so new findings
