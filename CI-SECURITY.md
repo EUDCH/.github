@@ -101,12 +101,12 @@ permissions:
   security-events: write
 jobs:
   zizmor:
-    uses: operas-eu/.github/.github/workflows/zizmor.yml@<sha> # operas-eu/.github#<n>
+    uses: EUDCH/.github/.github/workflows/zizmor.yml@<sha> # EUDCH/.github#<n>
     with:
       advanced-security: false
 ```
 
-The reusable workflow is pinned by commit SHA. The org `.github` repository is not release-tagged, so the pin carries a `# operas-eu/.github#<n>` reference to the pull request that set it, rather than the `# vX.Y.Z` comment used for released actions.
+The reusable workflow is pinned by commit SHA. The org `.github` repository is not release-tagged, so the pin carries a `# EUDCH/.github#<n>` reference to the pull request that set it, rather than the `# vX.Y.Z` comment used for released actions.
 
 The caller grants `security-events: write` because the reusable workflow declares that permission, and a caller that grants less than a reusable workflow declares fails the call. The permission is exercised only on the `advanced-security: true` path (the SARIF upload to the Security tab); on `advanced-security: false` it is granted but unused. Tightening this further would be a change to the reusable workflow, not the caller.
 
